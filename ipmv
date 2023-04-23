@@ -1,0 +1,520 @@
+%%DIGITAL NEGATIVE
+
+clc
+clear all
+%f={5 4 2;1 6 0; 3 1 7];
+f=imread('pout.tif');
+[row,col]=size(f);
+for x=1:1:row
+for y=1:1:col
+g(x,y)=255-f(x,y);
+end
+end
+%g
+figure(1),imshow(f),title('og image')
+figure(2),imshow(g),title('negative image')
+
+
+%%THRESHOLDING
+
+clc
+clear all
+%f=[5 4 2;1 6 0;3 1 7;5 0 2];
+f=imread('pout.tif');
+r1=80;
+[row,col]=size(f);
+for x=1:1:row
+for y=1:1:col
+if 0<=f(x,y)&& f(x,y)<=r1
+g(x,y)=0;
+else
+g(x,y)=255;
+end
+end
+end
+%g
+figure(1),imshow(f),title('og image')
+figure(2),imshow(g),title('threshold image')
+
+
+%%CONTRAST STRETCHING
+
+clc
+clear all
+f=imread('pout.tif');
+r1=110;
+r2=180;
+alpha=0.5;
+beta=1.4;
+gamma=0.1;
+s1=alpha*r1;
+s2=beta*(r2-r1)+s1;
+[row,col]=size(f);
+for x=1:1:row
+for y=1:1:col
+if f(x,y)>=0 && f(x,y)<=r1
+g(x,y) = alpha*f(x,y);
+elseif f(x,y)>=r1 && f(x,y)<=r2
+g(x,y) = beta*(f(x,y)-r1)+s1;
+else
+g(x,y) = gamma*(f(x,y)-r2)+s2;
+end
+end
+end
+g;
+figure(1),imshow(f),title('og image')
+figure(2),imshow(g),title('contrast image')
+
+
+%%POWER LAW
+
+clc
+clear all
+f=double(imread('spine1.tif'));
+[row,col]=size(f);
+c=1.2;
+gamma=0.9;
+for x=1:1:row
+for y=1:1:col
+g(x,y)=c*f(x,y)^gamma;
+end
+end
+figure(1),imshow(uint8(f))
+figure(2),imshow(uint8(g))
+
+
+%%GRAYLEVEL SLICING 
+
+clc
+clear all
+%f=[14 10 5;13 6 7;12 5 11]
+f=imread('pout.tif');
+[row,col]=size(f);
+r1=100;
+r2=175;
+for x=1:1:row
+for y=1:1:col
+if r1<=f(x,y) && f(x,y)<=r2
+g1(x,y)=255; %grey slicing w/o background
+g2(x,y)=255; %grey slicing w background
+else
+g1(x,y)=0; %grey slicing w/o background
+g2(x,y)=f(x,y); %grey slicing w background
+end
+end
+end
+%g1
+%g2
+figure(1),imshow(f),title('og image')
+figure(2),imshow(g1),title('Grey slicing w/o background')
+figure(3),imshow(g2),title('Grey slicing w background')
+
+
+%%HISTOGRAM
+
+clc
+clear all
+%f=[5,4,5,6;7,7,7,4;1,1,0,2;;6,6,6,2]
+f=imread('pout.tif');
+[row,col]=size(f);
+h=zeros(1,256);
+for x=1:1:row
+for y=1:1:col
+temp=f(x,y);
+h(temp+1)=h(temp+1)+1;
+end
+end
+bar(h)
+figure(1),imshow(f)
+figure(2),bar(h)
+
+
+%%HISTOGRAM STRETCHING
+
+clc
+clear all
+%f=[5,4,5,6;7,7,7,4;1,1,0,2;;6,6,6,2]
+f=imread('pout.tif');
+[row,col]=size(f);
+h=zeros(1,256);
+for x=1:1:row
+for y=1:1:col
+temp=f(x,y);
+h(temp+1)=h(temp+1)+1;
+end
+end
+bar(h)
+figure(1),imshow(f)
+figure(2),bar(h)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Smax=255;
+Smin=0;
+rmin=min(min(f));
+rmax=max(max(f));
+for x=1:1:row;
+for y=1:1:col;
+g(x,y)=(Smax-Smin)/(rmax-rmin)*(f(x,y)-rmin)+Smin;
+end
+figure(3),imshow(g)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+h1=zeros(1,256);
+for x=1:1:row;
+for y=1:1:col;
+temp=g(x,y);
+h1(temp+1)=h1(temp+1)+1;
+end
+end
+figure(4),bar(h1)
+
+
+%%LOW PASS AVG
+
+clc
+clear all
+f1=imread('pout.tif');
+f=imnoise(f1,'gaussian');
+g=f;
+% f=[5 5 5 5 5 5 5 5;...
+%    5 5 5 5 5 5 5 5;...
+%    5 5 5 5 5 5 5 5;...
+%    5 5 5 5 5 5 5 5;...
+%    200 200 200 200 200 200 200 200;...
+%    200 200 200 200 200 200 200 200;...
+%    200 200 200 200 200 200 200 200;...
+%    200 200 200 200 200 200 200 200]
+w=[1 1 1; 1 1 1; 1 1 1]/9;
+[row,col]=size(f);
+for x=2:1:row-1;
+for y=2:1:col-1;
+g(x,y)=w(1,1)*f(x-1,y-1)+w(1,2)*f(x-1,y) + w(1,3)*f(x-1,y+1)+...
+clc
+clear all
+f1=imread('pout.tif');
+f=imnoise(f1,'gaussian');
+g=f;
+% f=[5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200]
+w=[1 1 1; 1 1 1; 1 1 1]/9;
+[row,col]=size(f);
+for x=2:1:row-1;
+for y=2:1:col-1;
+g(x,y)=w(1,1)*f(x-1,y-1)+w(1,2)*f(x-1,y) + w(1,3)*f(x-1,y+1)+...
+w(2,1)*f(x,y-1)+w(2,2)*f(x,y) + w(2,3)*f(x,y+1)+...
+w(3,1)*f(x+1,y-1)+w(3,2)*f(x+1,y) + w(3,3)*f(x+1,y+1);
+end
+end
+%g
+figure(1),imshow(f1)
+figure(2),imshow(f)
+figure(3),imshow(g)
+
+
+%%LOW PASS MEDIAN\
+
+clc
+clear all
+f1=imread('pout.tif');
+f=imnoise(f1,'salt & pepper',0.1);
+% g=f
+% f=[5 5 5 5 5 5 5 5;...
+% 5 255 5 5 255 5 5 5;...
+% 5 5 5 255 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 0 200 200 0 200 200;...
+% 200 200 200 0 200 200 200 200;...
+% 200 200 200 200 200 200 200 200]
+%g=f;
+[row,col]=size(f);
+for x=2:1:row-1
+for y=2:1:col-1
+t=[f(x-1,y-1) f(x-1,y) f(x-1,y+1)+...
+f(x,y-1) f(x,y) f(x,y+1)+...
+f(x+1,y-1) f(x+1,y) f(x+1,y+1)];
+t1=sort(t);
+g(x,y)=t1(5);
+end
+end
+%g
+figure(1),imshow(f1)
+figure(2),imshow(f)
+figure(3),imshow(g)
+
+
+%HIGH PASS STD
+
+clc
+clear all
+f=double(imread('pout.tif'));
+% f=[5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200]
+w=[-1 -1 -1; -1 8 -1; -1 -1 -1]
+[row,col]=size(f);
+for x=2:1:row-1
+for y=2:1:col-1
+g(x,y)=w(1,1)*f(x-1,y-1)+w(1,2)*f(x-1,y) + w(1,3)*f(x-1,y+1)+...
+w(2,1)*f(x,y-1)+w(2,2)*f(x,y) + w(2,3)*f(x,y+1)+...
+w(3,1)*f(x+1,y-1)+w(3,2)*f(x+1,y) + w(3,3)*f(x+1,y+1);
+end
+end
+%g
+figure(1),imshow(uint8(f))
+figure(2),imshow(uint8(g))
+
+
+%%HIGH PASS BOOST
+
+clc
+clear all
+f=double(imread('pout.tif'));
+% f=[5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 5 5 5 5 5 5 5 5;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200;...
+% 200 200 200 200 200 200 200 200]
+w=[-1 -1 -1; -1 8.9 -1; -1 -1 -1]
+[row,col]=size(f);
+for x=2:1:row-1
+for y=2:1:col-1
+g(x,y)=w(1,1)*f(x-1,y-1)+w(1,2)*f(x-1,y) + w(1,3)*f(x-1,y+1)+...
+w(2,1)*f(x,y-1)+w(2,2)*f(x,y) + w(2,3)*f(x,y+1)+...
+w(3,1)*f(x+1,y-1)+w(3,2)*f(x+1,y) + w(3,3)*f(x+1,y+1);
+end
+end
+%g
+figure(1),imshow(uint8(f)),title('original image')
+figure(2),imshow(uint8(g)),title('hpf boost image')
+
+%%IDEAL LPF
+
+clc
+clear all
+f1=double(imread('pout.tif'));
+[row,col]=size(f1)
+%Centering of Trasnform
+for x=1:1:row;
+for y=1:1:col;
+f(x,y)=f1(x,y)*(-1)^(x+y);
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F=fft2(f);
+figure(1),imshow(uint8(f)),title('original image')
+figure(2),imagesc(log(1+abs(F))),title('magnitude spectrum+Dynamic range compression')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Ideal H(u,v)
+D0=25
+for u=1:1:row;
+for v=1:1:col;
+D(u,v)=sqrt((u-(row/2))^2+(v-(row/2))^2);
+if D(u,v)<=D0
+H(u,v)=1;
+else
+H(u,v)=0;
+end
+end
+end
+figure(3),imshow(uint8(D))
+figure(4),imshow(H)
+figure(5)
+mesh(H)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+G=F.*H;
+g=ifft2(G);
+figure(6),imshow(uint8(abs(g)))
+
+
+%%LPF BUTTERWORTH
+
+clc
+clear all
+f1=double(imread('pout.tif'));
+[row,col]=size(f1)
+%Centering of Trasnform
+for x=1:1:row;
+for y=1:1:col;
+f(x,y)=f1(x,y)*(-1)^(x+y);
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F=fft2(f);
+figure(1),imshow(uint8(f)),title('original image')
+figure(2),imagesc(log(1+abs(F))),title('magnitude spectrum+Dynamic range compression')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Ideal H(u,v)
+D0=25;
+n=2;
+for u=1:1:row;
+for v=1:1:col;
+D(u,v)=sqrt((u-(row/2))^2+(v-(row/2))^2);
+H(u,v)=1-(1/(1+(D(u,v)/D0)^(2*n)));
+end
+end
+figure(3),imshow(uint8(D))
+figure(4),imshow(H)
+figure(5)
+mesh(H)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+G=F.*H;
+g=ifft2(G);
+figure(6),imshow(uint8(abs(g)))
+
+
+%%LPF GAUSSIAN
+
+clc
+clear all
+f1=double(imread('pout.tif'));
+[row,col]=size(f1)
+%Centering of Trasnform
+for x=1:1:row;
+for y=1:1:col;
+f(x,y)=f1(x,y)*(-1)^(x+y);
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F=fft2(f);
+figure(1),imshow(uint8(f)),title('original image')
+figure(2),imagesc(log(1+abs(F))),title('magnitude spectrum+Dynamic range compression')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Ideal H(u,v)
+D0=50;
+for u=1:1:row;
+for v=1:1:col;
+D(u,v)=sqrt((u-(row/2))^2+(v-(row/2))^2);
+H(u,v)=exp(-D(u,v)^(2)/(2*(D0)^(2)));
+end
+end
+figure(3),imshow(uint8(D))
+figure(4),imshow(H)
+figure(5)
+mesh(H)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+G=F.*H;
+g=ifft2(G);
+figure(6),imshow(uint8(abs(g)))
+
+
+%%IDEAL HPF
+
+clc
+clear all
+f1=double(imread('pout.tif'));
+[row,col]=size(f1)
+%Centering of Trasnform
+for x=1:1:row;
+for y=1:1:col;
+f(x,y)=f1(x,y)*(-1)^(x+y);
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F=fft2(f);
+figure(1),imshow(uint8(f)),title('original image')
+figure(2),imagesc(log(1+abs(F))),title('magnitude spectrum+Dynamic range compression')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Ideal H(u,v)
+D0=25
+for u=1:1:row;
+for v=1:1:col;
+D(u,v)=sqrt((u-(row/2))^2+(v-(row/2))^2);
+if D(u,v)<=D0
+H(u,v)=0;
+else
+H(u,v)=1;
+end
+end
+end
+figure(3),imshow(uint8(D))
+figure(4),imshow(H)
+figure(5)
+mesh(H)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+G=F.*H;
+g=ifft2(G);
+figure(6),imshow(uint8(abs(g)))
+
+
+%%BUTTERWORTH HPF
+
+clc;
+clear all;
+f1=double(imread('pout.tif'));
+[row,col]=size(f1);
+%%% Perform Centering %%%
+for x=1:1:row
+for y=1:1:col
+f(x,y)=f1(x,y)*(-1)^(x+y);
+end
+end
+% FOURIER TRANSFROM %
+F=fft2(f);
+figure(1),imshow(uint8(f1))
+figure(2),imagesc(log(1+abs(F)))
+%%% LPF Butterworth Filter %%%
+n=2;
+D0=40;
+for u=1:1:row
+for v=1:1:col
+D(u,v)=sqrt((u-(row/2))^2+(v-(row/2))^2);
+H(u,v)= 1-(1/(1+(D(u,v)/D0)^(2*n)));
+end
+end
+figure(3),imshow(uint8(D))
+figure(4),imshow(H)
+figure(5),mesh(H)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+G=F.*H;
+g=ifft2(G);
+figure(6),imshow(uint8(abs(g)))
+
+
+%%GAUSSIAN HPF
+
+clc
+clear all
+f1=double(imread('pout.tif'));
+[row,col]=size(f1)
+%Centering of Trasnform
+for x=1:1:row;
+for y=1:1:col;
+f(x,y)=f1(x,y)*(-1)^(x+y);
+end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+F=fft2(f);
+figure(1),imshow(uint8(f)),title('original image')
+figure(2),imagesc(log(1+abs(F))),title('magnitude spectrum+Dynamic range compression')
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Ideal H(u,v)
+D0=50;
+for u=1:1:row;
+for v=1:1:col;
+D(u,v)=sqrt((u-(row/2))^2+(v-(row/2))^2);
+H(u,v)=1-(exp(-D(u,v)^(2)/(2*(D0)^(2))));
+end
+end
+figure(3),imshow(uint8(D))
+figure(4),imshow(H)
+figure(5)
+mesh(H)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+G=F.*H;
+g=ifft2(G);
+figure(6),imshow(uint8(abs(g)))
+
+
